@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// posix thread kütüphanesi
+// posix thread kutuphanesi
 #include <pthread.h>
 #define THREAD_ADET 4
 
