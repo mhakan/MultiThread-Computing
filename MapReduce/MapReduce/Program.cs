@@ -12,27 +12,54 @@ namespace MapReduce
     class Program
     {
         
+        //Verileri Al
+        //Ara
+        //Her dosyadan ayrı ayrı anahtar değer çifti oluştur
+        //Anahtar değer çiftlerini birleştir
+
         static void Main(string[] args)
         {
             int dosyaSayisi = 3;
             string dosya = "File";
             string tamDosya;
             ArrayList al_tumIcerikler = new ArrayList();
+            ArrayList[] al_icerik = new ArrayList[dosyaSayisi];
+            for (int i = 0; i < dosyaSayisi; i++)
+            {
+                al_icerik[i] = new ArrayList();
+            }
+
+            #region Verileri Al
             for (int i = 1; i < dosyaSayisi+1; i++)
             {
-                tamDosya = "../../" + dosya;
-                tamDosya = tamDosya + i.ToString();
-                ArrayList al_f = DosyaOku(tamDosya);
+                tamDosya = "../../" + dosya + i.ToString();
+                al_icerik[i-1] = DosyaOku(tamDosya);
+                
                 Console.WriteLine("\nFile{0} Icerigi:\n",i);
-                foreach (var item in al_f)
-                {
-                    Console.WriteLine(item.ToString());
-                    al_tumIcerikler.Add(item);
-                }
                 Console.Read();
+                for (int j = 0; j < al_icerik[i-1].Count; j++)
+                {
+                    Console.WriteLine("{0}",al_icerik[i-1][j]);
+                }
             }
+            #endregion
             
+            DataTable []dt = new DataTable[dosyaSayisi];
+            for (int i = 0; i < dosyaSayisi; i++)
+            {
+                dt[i] = new DataTable();
+            }
+            #region Anahtar Değer Çiftleri Oluştur
+            for (int i = 0; i < dosyaSayisi; i++)
+            {
+                dt[i] = VerileriBelirle(al_icerik[i]);
+            }
+            #endregion
+
+
+            //Reduce: Anahtar değer çiftlerini oluştur ve birleştir
             
+            //-------------------
         }
 
         private static ArrayList DosyaOku(string fileName)
@@ -62,23 +89,36 @@ namespace MapReduce
             DataTable veriTablosu = new DataTable();
             veriTablosu.Columns.Add("VeriAdi",typeof(string));
             veriTablosu.Columns.Add("VeriSayisi", typeof(int));
-            foreach (var item in al_tumIcerik)
+
+            for(int k = 0; k<al_tumIcerik.Count;k++) 
             {
-                int veriBoyu = veriTablosu.Rows.Count; 
+                int eslesme = 0;
+                int sayi = 1;
+                int veriBoyu = veriTablosu.Rows.Count;
+                string item = al_tumIcerik[k].ToString();
+
                 for (int i = 0; i < veriBoyu; i++)
                 {
-                    if (veriTablosu.Rows["VeriAdi"][i].ToString() == item.ToString())
+                    string str = veriTablosu.Rows[i]["VeriAdi"].ToString();
+                    if (str == item.ToString())
                     {
-                        
-                    }
+                        eslesme += 1;
+                        sayi = Convert.ToInt32(veriTablosu.Rows[i]["VeriSayisi"]);
+                        sayi = sayi + 1;
+                        veriTablosu.Rows[i]["VeriSayisi"] = sayi;
+                    }   
                 }
-                if (true)
+
+                if (eslesme == 0)
                 {
-                    
+                    veriTablosu.Rows.Add(item, sayi);
                 }
+               
             }
             return veriTablosu;
         }
+
+
     }
 }
 
