@@ -13,7 +13,6 @@ namespace MapReduce
 {
     class Program
     {
-        
         //Verileri Al
         //Ara
         //Her dosyadan ayrı ayrı anahtar değer çifti oluştur
@@ -21,6 +20,7 @@ namespace MapReduce
 
         static void Main(string[] args)
         {
+            #region yerel değişkenler
             int dosyaSayisi = 3;
             string dosya = "File";
             string tamDosya;
@@ -31,6 +31,7 @@ namespace MapReduce
                 al_icerik[i] = new ArrayList();
             }
             object obj = new object();
+            #endregion
 
             #region Verileri Al
             Console.WriteLine("1. ADIM: Dosya iceriklerinin alınması");
@@ -51,14 +52,14 @@ namespace MapReduce
            );
             #endregion
 
-
+            #region dictionary tanımlamaları
             ConcurrentDictionary<string, int> tumElemanlar = new ConcurrentDictionary<string, int>();
             ConcurrentDictionary<string, int>[] Elemanlar = new ConcurrentDictionary<string, int>[dosyaSayisi];
             for (int i = 0; i < dosyaSayisi; i++)
             {
                 Elemanlar[i] = new ConcurrentDictionary<string, int>();
             }
-        
+            #endregion
 
             #region Anahtar Değer Çiftleri Oluştur
             for (int i = 0; i < dosyaSayisi; i++)
@@ -73,14 +74,18 @@ namespace MapReduce
                 }
             }
             #endregion
-            
 
+            #region Anahtar Değer Çiftlerini Birleştir
+            //Anahtar değer çiftlerini birleştir
             ConcurrentDictionary<string, int> sonuclar = VerileriBirlestir(Elemanlar,dosyaSayisi);
+            
+            //Sonuçları yazdır
             Console.WriteLine("\n\nSONUCLAR------\n"); 
             foreach (var item in sonuclar) 
             {
-                Console.WriteLine("{0}", item); 
+                Console.WriteLine("{0}", item);
             }
+            #endregion
 
             Console.ReadLine();
             //-------------------
